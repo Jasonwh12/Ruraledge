@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RuralEdge</title>
+</head>
+<body style="font-family:sans-serif;padding:2rem;max-width:600px;margin:auto;">
+  <h1>RuralEdge</h1>
+  <p>Smart tools for busy sheep farmers</p>
+  <ul>
+    <li><strong>Lamb Price:</strong> $7.60/kg (avg)</li>
+    <li><strong>Store Lamb Value:</strong> $118/head</li>
+    <li><strong>Pasture Growth:</strong> 26 kgDM/ha/day</li>
+    <li><strong>Feed Surplus:</strong> +2,100 kgDM</li>
+    <li><strong>Weather Alert:</strong> Rain expected in 48 hours</li>
+  </ul>
+
+  <div style="margin-top:2rem;">
+    <label for="question"><strong>Ask FarmBot:</strong></label><br>
+    <input id="question" type="text" placeholder="e.g. How many lambs can I run on 10ha?" style="width:100%;padding:0.5rem;margin-top:0.5rem;" />
+    <button onclick="askFarmBot()" style="margin-top:0.5rem;padding:0.5rem 1rem;">Submit</button>
+    <p id="response" style="margin-top:1rem;font-style:italic;"></p>
+  </div>
+
+  <footer style="margin-top:2rem;color:gray;font-size:0.8rem;">© 2025 Jason Wyn-Harris</footer>
+
+  <script>
+    async function askFarmBot() {
+      const question = document.getElementById('question').value;
+      const responseElem = document.getElementById('response');
+      responseElem.innerText = "Thinking...";
+
+      const result = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: question }]
+        })
+      });
+
+      const data = await result.json();
+      if (data.choices && data.choices.length > 0) {
+        responseElem.innerText = data.choices[0].message.content;
+      } else {
+        responseElem.innerText = "Something went wrong. Try again.";
+      }
+    }
+  </script>
+</body>
+</html>
